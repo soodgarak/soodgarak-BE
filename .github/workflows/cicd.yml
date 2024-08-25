@@ -53,6 +53,6 @@ jobs:
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: 22
         script: |
-          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} down ${{ secrets.PROJECT_NAME }}
-          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} pull ${{ secrets.PROJECT_NAME }}
-          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} up -d ${{ secrets.PROJECT_NAME }}
+          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} down ${{ secrets.PROJECT_IMAGE_NAME }}
+          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} pull ${{ secrets.PROJECT_IMAGE_NAME }}
+          sudo docker-compose -f ${{ secrets.DOCKER_COMPOSE_YML_PATH }} up -d ${{ secrets.PROJECT_IMAGE_NAME }}
