@@ -50,7 +50,7 @@ public class RecipeService {
         }
     }
 
-    private List<Recipe> getAllRecipeList() {
+    public List<Recipe> getAllRecipeList() {
         initRedis(RecipeGroup.ALL);
 
         List<Recipe> recipeList = recipeQueryRepository.getInitAllRecipeList();
