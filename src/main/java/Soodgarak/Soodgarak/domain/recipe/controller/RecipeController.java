@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,23 +25,26 @@ public class RecipeController {
     @GetMapping
     @Operation(summary = "레시피 조회", description = "조건에 해당하는 레시피 List를 조회합니다.")
     public ResponseEntity<List<RecipeResponse>> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+
         if (recipeRequest.page() == null) {
             if (recipeRequest.keyword() != null) {
-                return ResponseEntity.ok(recipeService.getInitSearchRecipeList(recipeRequest.keyword()));
+                recipeResponseList = recipeService.getInitSearchRecipeList(recipeRequest.keyword());
             } else if (recipeRequest.category() != null) {
-                return ResponseEntity.ok(recipeService.getInitCategoryRecipeList(recipeRequest.category()));
+                recipeResponseList = recipeService.getInitCategoryRecipeList(recipeRequest.category());
             } else {
-                return ResponseEntity.ok(recipeService.getInitAllRecipeList());
+                recipeResponseList = recipeService.getInitAllRecipeList();
             }
         } else {
             if (recipeRequest.keyword() != null) {
 
             } else if (recipeRequest.category() != null) {
-                return ResponseEntity.ok(recipeService.addFromCategoryRecipeList(recipeRequest.category()));
+                recipeResponseList = recipeService.addFromCategoryRecipeList(recipeRequest.category());
             } else {
-                return ResponseEntity.ok(recipeService.addFromAllRecipeList());
+                recipeResponseList = recipeService.addFromAllRecipeList();
             }
         }
-        return ResponseEntity.ok(null);
+
+        return ResponseEntity.ok(recipeResponseList);
     }
 }
