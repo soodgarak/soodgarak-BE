@@ -1,18 +1,15 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
-import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
+import Soodgarak.Soodgarak.domain.recipe.repository.RecipeRepository;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.CategoryRecipeRedis;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.RecipeRedis;
-import Soodgarak.Soodgarak.domain.recipe.repository.RecipeRepository;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.SearchRecipeRedis;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +32,14 @@ public class RecipeService {
         }
     }
 
-    private void initRedis(RecipeGroup key) {
-        if (key.equals(RecipeGroup.ALL) && recipeRedis.existsById(initCheckValue)) {
+    private void initRedis(RecipeGroup group) {
+        if (group.equals(RecipeGroup.ALL) && recipeRedis.existsById(initCheckValue)) {
             recipeRedis.deleteAll();
             recipeRedis.save(RedisRecipe.of(initCheckValue));
-        } else if (key.equals(RecipeGroup.CATEGORY) && categoryRecipeRedis.existsById(initCheckValue)) {
+        } else if (group.equals(RecipeGroup.CATEGORY) && categoryRecipeRedis.existsById(initCheckValue)) {
             categoryRecipeRedis.deleteAll();
             categoryRecipeRedis.save(RedisCategoryRecipe.of(initCheckValue));
-        } else if (key.equals(RecipeGroup.SEARCH) && searchRecipeRedis.existsById(initCheckValue)) {
+        } else if (group.equals(RecipeGroup.SEARCH) && searchRecipeRedis.existsById(initCheckValue)) {
             searchRecipeRedis.deleteAll();
             searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue));
         }
