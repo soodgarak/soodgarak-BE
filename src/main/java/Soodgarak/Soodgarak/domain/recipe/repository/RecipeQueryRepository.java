@@ -22,6 +22,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -35,6 +36,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -50,6 +52,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -65,6 +68,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -78,6 +82,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -90,6 +95,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -105,6 +111,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -119,6 +126,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)
@@ -134,6 +142,7 @@ public class RecipeQueryRepository {
                         recipe.id,
                         recipe.menu,
                         recipe.mainImage,
+                        recipe.mbti,
                         recipe.way,
                         recipe.category))
                 .from(recipe)

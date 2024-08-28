@@ -4,6 +4,7 @@ public record RecipeResponse(
         Long id,
         String menu,
         String mainImage,
+        String mbti,
         String way,
         String category
 ) {
@@ -11,9 +12,10 @@ public record RecipeResponse(
             Long id,
             String menu,
             String mainImage,
+            String mbti,
             String way,
             String category
     ) {
-        return new RecipeResponse(id, menu, mainImage, way, category);
+        return new RecipeResponse(id, menu, mainImage, mbti, way, category);
     }
 }

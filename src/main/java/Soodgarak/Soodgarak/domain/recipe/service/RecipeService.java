@@ -51,6 +51,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
@@ -70,6 +71,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
@@ -90,6 +92,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
@@ -115,6 +118,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
@@ -140,6 +144,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
@@ -165,6 +170,7 @@ public class RecipeService {
                     recipe.getId(),
                     recipe.getMenu(),
                     recipe.getMainImage(),
+                    recipe.getMbti(),
                     recipe.getWay(),
                     recipe.getCategory()
             ));
