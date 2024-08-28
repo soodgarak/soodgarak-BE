@@ -23,7 +23,8 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @GetMapping
-    @Operation(summary = "레시피 조회", description = "조건에 해당하는 레시피 List를 조회합니다.")
+    @Operation(summary = "레시피 조회",
+            description = "조건(전체, 카테고리, 검색)에 해당하는 레시피 List를 조회합니다. 각 Query Parameter는 생략이 가능합니다.")
     public ResponseEntity<List<RecipeResponse>> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
 
