@@ -148,4 +148,28 @@ public class RecipeService {
         return recipeResponseList;
     }
 
+    public List<RecipeResponse> addFromSearchRecipeList(String keyword) {
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+        List<Recipe> recipeList = recipeQueryRepository.addFromSearchRecipeList(keyword);
+
+        for (int index = 0; index < recipeList.size(); index++) {
+            if (searchRecipeRedis.existsById(recipeList.get(index).getId())) {
+                recipeList.remove(index--);
+                recipeList.add(recipeQueryRepository.addOneFromSearchRecipeList(keyword));
+            }
+        }
+
+        for (Recipe recipe : recipeList) {
+            searchRecipeRedis.save(RedisSearchRecipe.of(recipe.getId()));
+            recipeResponseList.add(RecipeResponse.of(
+                    recipe.getId(),
+                    recipe.getMenu(),
+                    recipe.getMainImage(),
+                    recipe.getWay(),
+                    recipe.getCategory()
+            ));
+        }
+
+        return recipeResponseList;
+    }
 }

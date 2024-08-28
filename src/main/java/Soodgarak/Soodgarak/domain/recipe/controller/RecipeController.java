@@ -37,7 +37,7 @@ public class RecipeController {
             }
         } else {
             if (recipeRequest.keyword() != null) {
-
+                recipeResponseList = recipeService.addFromSearchRecipeList(recipeRequest.keyword());
             } else if (recipeRequest.category() != null) {
                 recipeResponseList = recipeService.addFromCategoryRecipeList(recipeRequest.category());
             } else {

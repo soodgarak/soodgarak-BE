@@ -120,4 +120,35 @@ public class RecipeQueryRepository {
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .fetchOne();
     }
+
+    public List<Recipe> addFromSearchRecipeList(String keyword) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.menu.contains(keyword)
+                        .or(recipe.ingredient.contains(keyword)))
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(10)
+                .fetch();
+    }
+
+    public Recipe addOneFromSearchRecipeList(String keyword) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.menu.contains(keyword)
+                        .or(recipe.ingredient.contains(keyword)))
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .fetchOne();
+    }
 }
