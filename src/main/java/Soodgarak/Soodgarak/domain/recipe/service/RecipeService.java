@@ -122,4 +122,30 @@ public class RecipeService {
 
         return recipeResponseList;
     }
+
+    public List<RecipeResponse> addFromCategoryRecipeList(String category) {
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+        List<Recipe> recipeList = recipeQueryRepository.addFromCategoryRecipeList(category);
+
+        for (int index = 0; index < recipeList.size(); index++) {
+            if (categoryRecipeRedis.existsById(recipeList.get(index).getId())) {
+                recipeList.remove(index--);
+                recipeList.add(recipeQueryRepository.addOneFromCategoryRecipeList(category));
+            }
+        }
+
+        for (Recipe recipe : recipeList) {
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(recipe.getId()));
+            recipeResponseList.add(RecipeResponse.of(
+                    recipe.getId(),
+                    recipe.getMenu(),
+                    recipe.getMainImage(),
+                    recipe.getWay(),
+                    recipe.getCategory()
+            ));
+        }
+
+        return recipeResponseList;
+    }
+
 }

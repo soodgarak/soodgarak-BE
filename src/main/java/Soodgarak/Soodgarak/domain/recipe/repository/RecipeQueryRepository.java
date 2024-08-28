@@ -90,4 +90,34 @@ public class RecipeQueryRepository {
                 .fetchOne();
     }
 
+    public List<Recipe> addFromCategoryRecipeList(String category) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.mbti.like(category + "%")
+                        .or(recipe.mbti.like( "%" + category)))
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(10)
+                .fetch();
+    }
+
+    public Recipe addOneFromCategoryRecipeList(String category) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.mbti.like(category + "%")
+                        .or(recipe.mbti.like( "%" + category)))
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .fetchOne();
+    }
 }
