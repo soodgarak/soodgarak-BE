@@ -2,6 +2,7 @@ package Soodgarak.Soodgarak.domain.recipe.repository;
 
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class RecipeQueryRepository {
                         recipe.way,
                         recipe.category))
                 .from(recipe)
-                .orderBy(NumberExpression.random().asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(30)
                 .fetch();
     }
@@ -41,7 +42,7 @@ public class RecipeQueryRepository {
                 .from(recipe)
                 .where(recipe.mbti.like(category + "%")
                         .or(recipe.mbti.like( "%" + category)))
-                .orderBy(NumberExpression.random().asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(30)
                 .fetch();
     }
@@ -56,7 +57,7 @@ public class RecipeQueryRepository {
                         recipe.category))
                 .from(recipe)
                 .where(recipe.mbti.contains(keyword))
-                .orderBy(NumberExpression.random().asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(30)
                 .fetch();
     }
