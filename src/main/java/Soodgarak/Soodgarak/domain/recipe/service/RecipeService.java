@@ -1,9 +1,11 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
+import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
+import Soodgarak.Soodgarak.domain.recipe.repository.RecipeQueryRepository;
 import Soodgarak.Soodgarak.domain.recipe.repository.RecipeRepository;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.CategoryRecipeRedis;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.RecipeRedis;
@@ -11,10 +13,13 @@ import Soodgarak.Soodgarak.domain.recipe.repository.redis.SearchRecipeRedis;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
     private final RecipeRepository recipeRepository;
+    private final RecipeQueryRepository recipeQueryRepository;
     private final RecipeRedis recipeRedis;
     private final CategoryRecipeRedis categoryRecipeRedis;
     private final SearchRecipeRedis searchRecipeRedis;
@@ -45,4 +50,15 @@ public class RecipeService {
         }
     }
 
+    private List<Recipe> getAllRecipeList() {
+        initRedis(RecipeGroup.ALL);
+
+        List<Recipe> recipeList = recipeQueryRepository.getInitAllRecipeList();
+
+        for (Recipe recipe : recipeList) {
+            recipeRedis.save(RedisRecipe.of(recipe.getId()));
+        }
+
+        return recipeList;
+    }
 }
