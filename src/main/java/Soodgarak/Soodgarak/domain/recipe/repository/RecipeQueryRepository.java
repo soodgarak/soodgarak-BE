@@ -56,7 +56,8 @@ public class RecipeQueryRepository {
                         recipe.way,
                         recipe.category))
                 .from(recipe)
-                .where(recipe.mbti.contains(keyword))
+                .where(recipe.menu.contains(keyword)
+                        .or(recipe.ingredient.contains(keyword)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(30)
                 .fetch();
