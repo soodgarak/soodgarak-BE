@@ -70,4 +70,24 @@ public class RecipeService {
         }
         return recipeResponseList;
     }
+
+    public List<RecipeResponse> getInitCategoryRecipeList(String category) {
+        initRedis(RecipeGroup.CATEGORY);
+
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+        List<Recipe> recipeList = recipeQueryRepository.getInitCategoryRecipeList(category);
+
+        for (Recipe recipe : recipeList) {
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(recipe.getId()));
+            recipeResponseList.add(RecipeResponse.of(
+                    recipe.getId(),
+                    recipe.getMenu(),
+                    recipe.getMainImage(),
+                    recipe.getWay(),
+                    recipe.getCategory()
+            ));
+        }
+
+        return recipeResponseList;
+    }
 }

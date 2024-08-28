@@ -29,4 +29,20 @@ public class RecipeQueryRepository {
                 .limit(30)
                 .fetch();
     }
+
+    public List<Recipe> getInitCategoryRecipeList(String category) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.mbti.like(category + "%")
+                        .or(recipe.mbti.like( "%" + category)))
+                .orderBy(NumberExpression.random().asc())
+                .limit(30)
+                .fetch();
+    }
 }

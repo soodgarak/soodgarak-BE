@@ -27,7 +27,7 @@ public class RecipeController {
             if (recipeRequest.keyword() != null) {
 
             } else if (recipeRequest.category() != null) {
-
+                return ResponseEntity.ok(recipeService.getInitCategoryRecipeList(recipeRequest.category()));
             } else {
                 return ResponseEntity.ok(recipeService.getInitAllRecipeList());
             }
