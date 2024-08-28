@@ -77,4 +77,24 @@ public class RecipeService {
 
         return recipeResponseList;
     }
+
+    public List<RecipeResponse> getInitSearchRecipeList(String keyword) {
+        initRedis(RecipeGroup.SEARCH);
+
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+        List<Recipe> recipeList = recipeQueryRepository.getInitSearchRecipeList(keyword);
+
+        for (Recipe recipe : recipeList) {
+            searchRecipeRedis.save(RedisSearchRecipe.of(recipe.getId()));
+            recipeResponseList.add(RecipeResponse.of(
+                    recipe.getId(),
+                    recipe.getMenu(),
+                    recipe.getMainImage(),
+                    recipe.getWay(),
+                    recipe.getCategory()
+            ));
+        }
+
+        return recipeResponseList;
+    }
 }
