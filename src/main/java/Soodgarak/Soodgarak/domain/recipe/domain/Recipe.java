@@ -20,13 +20,15 @@ public class Recipe {
     private Long id;
     private String menu;
     private String mainImage;
+    private String mbti;
+    private String way;
+    private String category;
 
-    private Recipe (String menu, String mainImage) {
+    private Recipe (String menu, String mainImage, String mbti, String way, String category) {
         this.menu = menu;
         this.mainImage = mainImage;
-    }
-
-    public static Recipe of(String menu, String mainImage) {
-        return new Recipe(menu, mainImage);
+        this.mbti = mbti;
+        this.way = way;
+        this.category = category;
     }
 }
