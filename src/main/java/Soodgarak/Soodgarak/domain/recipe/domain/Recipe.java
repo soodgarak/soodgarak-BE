@@ -23,12 +23,14 @@ public class Recipe {
     private String mbti;
     private String way;
     private String category;
+    private String ingredient;
 
-    private Recipe (String menu, String mainImage, String mbti, String way, String category) {
+    private Recipe (String menu, String mainImage, String mbti, String way, String category, String ingredient) {
         this.menu = menu;
         this.mainImage = mainImage;
         this.mbti = mbti;
         this.way = way;
         this.category = category;
+        this.ingredient = ingredient;
     }
 }
