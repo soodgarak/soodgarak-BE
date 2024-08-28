@@ -1,5 +1,8 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
+import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
+import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
+import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.CategoryRecipeRedis;
 import Soodgarak.Soodgarak.domain.recipe.repository.redis.RecipeRedis;
 import Soodgarak.Soodgarak.domain.recipe.repository.RecipeRepository;
@@ -31,10 +34,13 @@ public class RecipeService {
     private void initRedis(String key) {
         if (key.equals("all") && recipeRedis.existsById(initCheckValue)) {
             recipeRedis.deleteAll();
+            recipeRedis.save(RedisRecipe.of(initCheckValue));
         } else if (key.equals("category") && categoryRecipeRedis.existsById(initCheckValue)) {
             categoryRecipeRedis.deleteAll();
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(initCheckValue));
         } else if (key.equals("search") && searchRecipeRedis.existsById(initCheckValue)) {
             searchRecipeRedis.deleteAll();
+            searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue));
         }
     }
 }
