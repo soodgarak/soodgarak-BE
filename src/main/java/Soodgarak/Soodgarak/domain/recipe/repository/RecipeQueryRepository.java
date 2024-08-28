@@ -62,4 +62,32 @@ public class RecipeQueryRepository {
                 .limit(30)
                 .fetch();
     }
+
+    public List<Recipe> addFromAllRecipeList() {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(10)
+                .fetch();
+    }
+
+    public Recipe addOneFromAllRecipeList() {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .fetchOne();
+    }
+
 }

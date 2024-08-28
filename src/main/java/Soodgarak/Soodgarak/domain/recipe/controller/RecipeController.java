@@ -38,7 +38,7 @@ public class RecipeController {
             } else if (recipeRequest.category() != null) {
 
             } else {
-
+                return ResponseEntity.ok(recipeService.addFromAllRecipeList());
             }
         }
         return ResponseEntity.ok(null);
