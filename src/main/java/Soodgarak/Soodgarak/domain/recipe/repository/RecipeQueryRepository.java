@@ -17,8 +17,15 @@ public class RecipeQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<Recipe> getInitAllRecipeList() {
-        return queryFactory.select(Projections.bean(Recipe.class, recipe.id, recipe.menu, recipe.mainImage))
-                .from(recipe).orderBy(NumberExpression.random().asc())
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .orderBy(NumberExpression.random().asc())
                 .limit(30)
                 .fetch();
     }

@@ -1,6 +1,7 @@
 package Soodgarak.Soodgarak.domain.recipe.controller;
 
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeRequest;
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,7 @@ public class RecipeController {
 
     @GetMapping
     @Operation(summary = "레시피 조회", description = "조건에 해당하는 레시피 List를 조회합니다.")
-    public ResponseEntity<List<Recipe>> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
+    public ResponseEntity<List<RecipeResponse>> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
         // 초기 30개
         if (recipeRequest.page() == null) {
             if (recipeRequest.keyword() != null) {

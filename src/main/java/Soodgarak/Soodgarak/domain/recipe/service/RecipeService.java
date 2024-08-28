@@ -1,5 +1,6 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
@@ -13,6 +14,7 @@ import Soodgarak.Soodgarak.domain.recipe.repository.redis.SearchRecipeRedis;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,16 +52,22 @@ public class RecipeService {
         }
     }
 
-    public List<Recipe> getInitAllRecipeList() {
+    public List<RecipeResponse> getInitAllRecipeList() {
         initRedis(RecipeGroup.ALL);
 
+        List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.getInitAllRecipeList();
 
         for (Recipe recipe : recipeList) {
             recipeRedis.save(RedisRecipe.of(recipe.getId()));
+            recipeResponseList.add(RecipeResponse.of(
+                    recipe.getId(),
+                    recipe.getMenu(),
+                    recipe.getMainImage(),
+                    recipe.getWay(),
+                    recipe.getCategory()
+            ));
         }
-
-        return recipeList;
+        return recipeResponseList;
     }
-
 }
