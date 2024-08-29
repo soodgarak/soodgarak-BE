@@ -87,6 +87,7 @@ public class RecipeQueryRepository {
                         recipe.category))
                 .from(recipe)
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(1)
                 .fetchOne();
     }
 
@@ -118,6 +119,7 @@ public class RecipeQueryRepository {
                 .where(recipe.mbti.like(category + "%")
                         .or(recipe.mbti.like( "%" + category)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(1)
                 .fetchOne();
     }
 
@@ -149,6 +151,7 @@ public class RecipeQueryRepository {
                 .where(recipe.menu.contains(keyword)
                         .or(recipe.ingredient.contains(keyword)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(1)
                 .fetchOne();
     }
 }
