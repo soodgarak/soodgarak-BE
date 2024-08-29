@@ -95,25 +95,28 @@ public class RecipeService {
     }
 
     public RecipeWithCountResponse getResponse(String keyword, RequestType requestType) {
-        Long totalCount = countData(keyword);
+        Long totalCount;
         boolean hasNextData;
         List<RecipeResponse> recipeResponseList;
 
         if (keyword.isBlank()) {
-            hasNextData = checkNextData(RecipeGroup.ALL, totalCount);
             if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitAllRecipeList(); }
             else { recipeResponseList = addFromAllRecipeList(); }
+            totalCount = countData(keyword);
+            hasNextData = checkNextData(RecipeGroup.ALL, totalCount);
         } else if (keyword.equals("M") || keyword.equals("S")
                 || keyword.equals("V") || keyword.equals("H") || keyword.equals("N")) {
-            hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
             if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitCategoryRecipeList(keyword); }
             else { recipeResponseList = addFromCategoryRecipeList(keyword); }
+            totalCount = countData(keyword);
+            hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
         } else {
-            hasNextData = checkNextData(RecipeGroup.SEARCH, totalCount);
             if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitSearchRecipeList(keyword); }
             else { recipeResponseList = addFromSearchRecipeList(keyword); }
-
+            totalCount = countData(keyword);
+            hasNextData = checkNextData(RecipeGroup.SEARCH, totalCount);
         }
+
 
         return RecipeWithCountResponse.of(
                 totalCount,
