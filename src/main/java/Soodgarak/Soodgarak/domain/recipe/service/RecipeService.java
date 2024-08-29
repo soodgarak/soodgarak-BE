@@ -1,8 +1,10 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
+import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
@@ -20,33 +22,115 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
+    private final RecipeRepository recipeRepository;
     private final RecipeQueryRepository recipeQueryRepository;
     private final RecipeRedis recipeRedis;
     private final CategoryRecipeRedis categoryRecipeRedis;
     private final SearchRecipeRedis searchRecipeRedis;
     private final Long initCheckValue = 0L;
+    private final Long countCheckValue = -1L;
 
     private void initRedis(RecipeGroup group) {
         if (group.equals(RecipeGroup.ALL) && recipeRedis.existsById(initCheckValue)) {
             recipeRedis.deleteAll();
-            recipeRedis.save(RedisRecipe.of(initCheckValue));
+            recipeRedis.save(RedisRecipe.of(initCheckValue, initCheckValue));
         } else if (group.equals(RecipeGroup.CATEGORY) && categoryRecipeRedis.existsById(initCheckValue)) {
             categoryRecipeRedis.deleteAll();
-            categoryRecipeRedis.save(RedisCategoryRecipe.of(initCheckValue));
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(initCheckValue, initCheckValue));
         } else if (group.equals(RecipeGroup.SEARCH) && searchRecipeRedis.existsById(initCheckValue)) {
             searchRecipeRedis.deleteAll();
-            searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue));
+            searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue, initCheckValue));
         }
     }
 
-    public List<RecipeResponse> getInitAllRecipeList() {
+    private Long countData(String keyword) {
+        Long totalCount;
+        if (keyword.isBlank()) {
+            if (recipeRedis.existsById(countCheckValue)) {
+                return recipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
+            }
+            totalCount = recipeRepository.count();
+            recipeRedis.save(RedisRecipe.of(countCheckValue, totalCount));
+
+        } else if (keyword.equals("M") || keyword.equals("S") || keyword.equals("V")) {
+            if (categoryRecipeRedis.existsById(countCheckValue)) {
+                return categoryRecipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
+            }
+            totalCount = recipeRepository.countByMbtiStartingWith(keyword);
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(countCheckValue, totalCount));
+
+        } else if (keyword.equals("H") || keyword.equals("N")) {
+            if (categoryRecipeRedis.existsById(countCheckValue)) {
+                return categoryRecipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
+            }
+            totalCount = recipeRepository.countByMbtiEndingWith(keyword);
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(countCheckValue, totalCount));
+        } else {
+            if (searchRecipeRedis.existsById(countCheckValue)) {
+                return searchRecipeRedis.findById((countCheckValue)).orElse(null).getRecipeId();
+            }
+            totalCount = recipeRepository.countByMenuContaining(keyword) + recipeRepository.countByIngredientContaining(keyword);
+            searchRecipeRedis.save(RedisSearchRecipe.of(countCheckValue, totalCount));
+        }
+
+        return totalCount;
+    }
+
+    private boolean checkNextData(RecipeGroup group, Long totalCount) {
+        if (group.equals(RecipeGroup.ALL)) {
+            if (recipeRedis.count() != totalCount) {
+                return true;
+            }
+        } else if (group.equals(RecipeGroup.CATEGORY)) {
+            if (categoryRecipeRedis.count() != totalCount) {
+                return true;
+            }
+        } else {
+            if (searchRecipeRedis.count() != totalCount) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public RecipeWithCountResponse getResponse(String keyword, RequestType requestType) {
+        Long totalCount = countData(keyword);
+        boolean hasNextData;
+        List<RecipeResponse> recipeResponseList;
+
+        if (keyword.isBlank()) {
+            hasNextData = checkNextData(RecipeGroup.ALL, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitAllRecipeList(); }
+            else { recipeResponseList = addFromAllRecipeList(); }
+        } else if (keyword.equals("M") || keyword.equals("S")
+                || keyword.equals("V") || keyword.equals("H") || keyword.equals("N")) {
+            hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitCategoryRecipeList(keyword); }
+            else { recipeResponseList = addFromCategoryRecipeList(keyword); }
+        } else {
+            hasNextData = checkNextData(RecipeGroup.SEARCH, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitSearchRecipeList(keyword); }
+            else { recipeResponseList = addFromSearchRecipeList(keyword); }
+
+        }
+
+        return RecipeWithCountResponse.of(
+                totalCount,
+                hasNextData,
+                recipeResponseList
+        );
+    }
+
+    private List<RecipeResponse> getInitAllRecipeList() {
         initRedis(RecipeGroup.ALL);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.getInitAllRecipeList();
 
         for (Recipe recipe : recipeList) {
-            recipeRedis.save(RedisRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            recipeRedis.save(RedisRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -59,14 +143,15 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> getInitCategoryRecipeList(String category) {
+    private List<RecipeResponse> getInitCategoryRecipeList(String category) {
         initRedis(RecipeGroup.CATEGORY);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.getInitCategoryRecipeList(category);
 
         for (Recipe recipe : recipeList) {
-            categoryRecipeRedis.save(RedisCategoryRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -80,14 +165,15 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> getInitSearchRecipeList(String keyword) {
+    private List<RecipeResponse> getInitSearchRecipeList(String keyword) {
         initRedis(RecipeGroup.SEARCH);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.getInitSearchRecipeList(keyword);
 
         for (Recipe recipe : recipeList) {
-            searchRecipeRedis.save(RedisSearchRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            searchRecipeRedis.save(RedisSearchRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -101,7 +187,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromAllRecipeList() {
+    private List<RecipeResponse> addFromAllRecipeList() {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromAllRecipeList();
 
@@ -113,7 +199,8 @@ public class RecipeService {
         }
 
         for (Recipe recipe : recipeList) {
-            recipeRedis.save(RedisRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            recipeRedis.save(RedisRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -127,7 +214,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromCategoryRecipeList(String category) {
+    private List<RecipeResponse> addFromCategoryRecipeList(String category) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromCategoryRecipeList(category);
 
@@ -139,7 +226,8 @@ public class RecipeService {
         }
 
         for (Recipe recipe : recipeList) {
-            categoryRecipeRedis.save(RedisCategoryRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            categoryRecipeRedis.save(RedisCategoryRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -153,7 +241,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromSearchRecipeList(String keyword) {
+    private List<RecipeResponse> addFromSearchRecipeList(String keyword) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromSearchRecipeList(keyword);
 
@@ -165,7 +253,8 @@ public class RecipeService {
         }
 
         for (Recipe recipe : recipeList) {
-            searchRecipeRedis.save(RedisSearchRecipe.of(recipe.getId()));
+            Long id = recipe.getId();
+            searchRecipeRedis.save(RedisSearchRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),

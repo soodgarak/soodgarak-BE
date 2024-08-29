@@ -1,7 +1,8 @@
 package Soodgarak.Soodgarak.domain.recipe.controller;
 
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeRequest;
-import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
+import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
 import Soodgarak.Soodgarak.domain.recipe.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,9 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,27 +23,27 @@ public class RecipeController {
     @GetMapping
     @Operation(summary = "레시피 조회",
             description = "조건(전체, 카테고리, 검색)에 해당하는 레시피 List를 조회합니다. 각 Query Parameter는 생략이 가능합니다.")
-    public ResponseEntity<List<RecipeResponse>> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
-        List<RecipeResponse> recipeResponseList = new ArrayList<>();
+    public ResponseEntity<RecipeWithCountResponse> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
+        RecipeWithCountResponse recipeResponse;
 
         if (recipeRequest.page() == null) {
             if (recipeRequest.keyword() != null) {
-                recipeResponseList = recipeService.getInitSearchRecipeList(recipeRequest.keyword());
+                recipeResponse = recipeService.getResponse(recipeRequest.keyword(), RequestType.INIT);
             } else if (recipeRequest.category() != null) {
-                recipeResponseList = recipeService.getInitCategoryRecipeList(recipeRequest.category());
+                recipeResponse = recipeService.getResponse(recipeRequest.category(), RequestType.INIT);
             } else {
-                recipeResponseList = recipeService.getInitAllRecipeList();
+                recipeResponse = recipeService.getResponse("", RequestType.INIT);
             }
         } else {
             if (recipeRequest.keyword() != null) {
-                recipeResponseList = recipeService.addFromSearchRecipeList(recipeRequest.keyword());
+                recipeResponse = recipeService.getResponse(recipeRequest.keyword(), RequestType.ADD);
             } else if (recipeRequest.category() != null) {
-                recipeResponseList = recipeService.addFromCategoryRecipeList(recipeRequest.category());
+                recipeResponse = recipeService.getResponse(recipeRequest.category(), RequestType.ADD);
             } else {
-                recipeResponseList = recipeService.addFromAllRecipeList();
+                recipeResponse = recipeService.getResponse("", RequestType.ADD);
             }
         }
 
-        return ResponseEntity.ok(recipeResponseList);
+        return ResponseEntity.ok(recipeResponse);
     }
 }
