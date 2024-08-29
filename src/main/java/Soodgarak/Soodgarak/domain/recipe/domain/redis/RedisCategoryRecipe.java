@@ -18,6 +18,6 @@ public class RedisCategoryRecipe implements Serializable {
     private Long recipeId;
 
     public static RedisCategoryRecipe of(Long id, Long recipeId) {
-        return new RedisCategoryRecipe(id, id);
+        return new RedisCategoryRecipe(id, recipeId);
     }
 }
