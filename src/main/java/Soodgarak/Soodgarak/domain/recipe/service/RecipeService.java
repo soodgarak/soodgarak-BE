@@ -100,7 +100,7 @@ public class RecipeService {
         );
     }
 
-    public List<RecipeResponse> getInitAllRecipeList() {
+    private List<RecipeResponse> getInitAllRecipeList() {
         initRedis(RecipeGroup.ALL);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> getInitCategoryRecipeList(String category) {
+    private List<RecipeResponse> getInitCategoryRecipeList(String category) {
         initRedis(RecipeGroup.CATEGORY);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
@@ -141,7 +141,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> getInitSearchRecipeList(String keyword) {
+    private List<RecipeResponse> getInitSearchRecipeList(String keyword) {
         initRedis(RecipeGroup.SEARCH);
 
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
@@ -162,7 +162,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromAllRecipeList() {
+    private List<RecipeResponse> addFromAllRecipeList() {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromAllRecipeList();
 
@@ -188,7 +188,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromCategoryRecipeList(String category) {
+    private List<RecipeResponse> addFromCategoryRecipeList(String category) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromCategoryRecipeList(category);
 
@@ -214,7 +214,7 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    public List<RecipeResponse> addFromSearchRecipeList(String keyword) {
+    private List<RecipeResponse> addFromSearchRecipeList(String keyword) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
         List<Recipe> recipeList = recipeQueryRepository.addFromSearchRecipeList(keyword);
 
