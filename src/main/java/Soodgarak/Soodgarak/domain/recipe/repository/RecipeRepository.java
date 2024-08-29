@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Long countByMbtiStartingWith(String keyword);
     Long countByMbtiEndingWith(String keyword);
-    Long countByMenuOrIngredientContaining(String keyword);
+    Long countByMenuOrIngredientContaining(String menuKeyword, String ingredientKeyword);
 }

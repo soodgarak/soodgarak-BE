@@ -69,7 +69,7 @@ public class RecipeService {
             if (searchRecipeRedis.existsById(countCheckValue)) {
                 return searchRecipeRedis.findById((countCheckValue)).orElse(null).getRecipeId();
             }
-            totalCount = recipeRepository.countByMenuOrIngredientContaining(keyword);
+            totalCount = recipeRepository.countByMenuOrIngredientContaining(keyword, keyword);
             searchRecipeRedis.save(RedisSearchRecipe.of(countCheckValue, totalCount));
         }
 
