@@ -1,6 +1,7 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
@@ -50,6 +51,24 @@ public class RecipeService {
         } else {
             return recipeRepository.countByMenuContaining(keyword) + recipeRepository.countByIngredientContaining(keyword);
         }
+    }
+
+    private boolean checkNextData(RecipeGroup group, Long totalCount) {
+        if (group.equals(RecipeGroup.ALL)) {
+            if (recipeRedis.count() != totalCount) {
+                return true;
+            }
+        } else if (group.equals(RecipeGroup.CATEGORY)) {
+            if (categoryRecipeRedis.count() != totalCount) {
+                return true;
+            }
+        } else {
+            if (searchRecipeRedis.count() != totalCount) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public List<RecipeResponse> getInitAllRecipeList() {
