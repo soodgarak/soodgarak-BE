@@ -18,6 +18,6 @@ public class RedisSearchRecipe implements Serializable {
     private Long recipeId;
 
     public static RedisSearchRecipe of(Long id, Long recipeId) {
-        return new RedisSearchRecipe(id, id);
+        return new RedisSearchRecipe(id, recipeId);
     }
 }
