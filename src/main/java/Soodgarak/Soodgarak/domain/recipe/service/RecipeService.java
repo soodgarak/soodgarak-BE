@@ -27,19 +27,15 @@ public class RecipeService {
     private final RecipeRedis recipeRedis;
     private final CategoryRecipeRedis categoryRecipeRedis;
     private final SearchRecipeRedis searchRecipeRedis;
-    private final Long initCheckValue = 0L;
     private final Long countCheckValue = -1L;
 
     private void initRedis(RecipeGroup group) {
-        if (group.equals(RecipeGroup.ALL) && recipeRedis.existsById(initCheckValue)) {
+        if (group.equals(RecipeGroup.ALL)) {
             recipeRedis.deleteAll();
-            recipeRedis.save(RedisRecipe.of(initCheckValue, initCheckValue));
-        } else if (group.equals(RecipeGroup.CATEGORY) && categoryRecipeRedis.existsById(initCheckValue)) {
+        } else if (group.equals(RecipeGroup.CATEGORY)) {
             categoryRecipeRedis.deleteAll();
-            categoryRecipeRedis.save(RedisCategoryRecipe.of(initCheckValue, initCheckValue));
-        } else if (group.equals(RecipeGroup.SEARCH) && searchRecipeRedis.existsById(initCheckValue)) {
+        } else if (group.equals(RecipeGroup.SEARCH)) {
             searchRecipeRedis.deleteAll();
-            searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue, initCheckValue));
         }
     }
 
