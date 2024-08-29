@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
+    private final RecipeRepository recipeRepository;
     private final RecipeQueryRepository recipeQueryRepository;
     private final RecipeRedis recipeRedis;
     private final CategoryRecipeRedis categoryRecipeRedis;
@@ -36,6 +37,18 @@ public class RecipeService {
         } else if (group.equals(RecipeGroup.SEARCH) && searchRecipeRedis.existsById(initCheckValue)) {
             searchRecipeRedis.deleteAll();
             searchRecipeRedis.save(RedisSearchRecipe.of(initCheckValue));
+        }
+    }
+
+    private Long countData(String keyword) {
+        if (keyword.isBlank()) {
+            return recipeRepository.count();
+        } else if (keyword.equals("M") || keyword.equals("S") || keyword.equals("V")) {
+            return recipeRepository.countByMbtiStartingWith(keyword);
+        } else if (keyword.equals("H") || keyword.equals("N")) {
+            return recipeRepository.countByMbtiEndingWith(keyword);
+        } else {
+            return recipeRepository.countByMenuContaining(keyword) + recipeRepository.countByIngredientContaining(keyword);
         }
     }
 
