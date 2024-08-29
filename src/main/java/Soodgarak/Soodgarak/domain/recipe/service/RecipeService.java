@@ -74,15 +74,15 @@ public class RecipeService {
 
     private boolean checkNextData(RecipeGroup group, Long totalCount) {
         if (group.equals(RecipeGroup.ALL)) {
-            if (recipeRedis.count() != totalCount) {
+            if (recipeRedis.count() < totalCount) {
                 return true;
             }
         } else if (group.equals(RecipeGroup.CATEGORY)) {
-            if (categoryRecipeRedis.count() != totalCount) {
+            if (categoryRecipeRedis.count() < totalCount) {
                 return true;
             }
         } else {
-            if (searchRecipeRedis.count() != totalCount) {
+            if (searchRecipeRedis.count() < totalCount) {
                 return true;
             }
         }
