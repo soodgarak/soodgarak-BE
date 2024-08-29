@@ -4,6 +4,7 @@ import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
+import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
@@ -69,6 +70,34 @@ public class RecipeService {
         }
 
         return false;
+    }
+
+    public RecipeWithCountResponse getResponse(String keyword, RequestType requestType) {
+        Long totalCount = countData(keyword);;
+        boolean hasNextData;
+        List<RecipeResponse> recipeResponseList;
+
+        if (keyword.isBlank()) {
+            hasNextData = checkNextData(RecipeGroup.ALL, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitAllRecipeList(); }
+            else { recipeResponseList = addFromAllRecipeList(); }
+        } else if (keyword.equals("M") || keyword.equals("S")
+                || keyword.equals("V") || keyword.equals("H") || keyword.equals("N")) {
+            hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = addFromCategoryRecipeList(keyword); }
+            else { recipeResponseList = addFromCategoryRecipeList(keyword); }
+        } else {
+            hasNextData = checkNextData(RecipeGroup.SEARCH, totalCount);
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = addFromSearchRecipeList(keyword); }
+            else { recipeResponseList = addFromSearchRecipeList(keyword); }
+
+        }
+
+        return RecipeWithCountResponse.of(
+                totalCount,
+                hasNextData,
+                recipeResponseList
+        );
     }
 
     public List<RecipeResponse> getInitAllRecipeList() {
