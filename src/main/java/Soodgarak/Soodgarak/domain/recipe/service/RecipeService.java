@@ -106,11 +106,11 @@ public class RecipeService {
         } else if (keyword.equals("M") || keyword.equals("S")
                 || keyword.equals("V") || keyword.equals("H") || keyword.equals("N")) {
             hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
-            if (requestType.equals(RequestType.INIT)) { recipeResponseList = addFromCategoryRecipeList(keyword); }
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitCategoryRecipeList(keyword); }
             else { recipeResponseList = addFromCategoryRecipeList(keyword); }
         } else {
             hasNextData = checkNextData(RecipeGroup.SEARCH, totalCount);
-            if (requestType.equals(RequestType.INIT)) { recipeResponseList = addFromSearchRecipeList(keyword); }
+            if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitSearchRecipeList(keyword); }
             else { recipeResponseList = addFromSearchRecipeList(keyword); }
 
         }
