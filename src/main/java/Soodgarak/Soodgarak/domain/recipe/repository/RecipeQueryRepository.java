@@ -63,7 +63,7 @@ public class RecipeQueryRepository {
                 .fetch();
     }
 
-    public List<Recipe> addFromAllRecipeList() {
+    public List<Recipe> addFromAllRecipeList(Long count) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -73,7 +73,7 @@ public class RecipeQueryRepository {
                         recipe.category))
                 .from(recipe)
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(10)
+                .limit(count)
                 .fetch();
     }
 
@@ -91,7 +91,7 @@ public class RecipeQueryRepository {
                 .fetchOne();
     }
 
-    public List<Recipe> addFromCategoryRecipeList(String category) {
+    public List<Recipe> addFromCategoryRecipeList(String category, Long count) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -123,7 +123,7 @@ public class RecipeQueryRepository {
                 .fetchOne();
     }
 
-    public List<Recipe> addFromSearchRecipeList(String keyword) {
+    public List<Recipe> addFromSearchRecipeList(String keyword, Long count) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -135,7 +135,7 @@ public class RecipeQueryRepository {
                 .where(recipe.menu.contains(keyword)
                         .or(recipe.ingredient.contains(keyword)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(10)
+                .limit(count)
                 .fetch();
     }
 
