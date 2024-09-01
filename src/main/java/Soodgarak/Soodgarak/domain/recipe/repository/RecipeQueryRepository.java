@@ -3,7 +3,6 @@ package Soodgarak.Soodgarak.domain.recipe.repository;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -78,20 +77,6 @@ public class RecipeQueryRepository {
                 .fetch();
     }
 
-    public Recipe addOneFromAllRecipeList() {
-        return queryFactory.select(Projections.bean(Recipe.class,
-                        recipe.id,
-                        recipe.menu,
-                        recipe.mainImage,
-                        recipe.mbti,
-                        recipe.way,
-                        recipe.category))
-                .from(recipe)
-                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(1)
-                .fetchOne();
-    }
-
     public List<Recipe> addFromCategoryRecipeList(String category, Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
@@ -109,22 +94,6 @@ public class RecipeQueryRepository {
                 .fetch();
     }
 
-    public Recipe addOneFromCategoryRecipeList(String category) {
-        return queryFactory.select(Projections.bean(Recipe.class,
-                        recipe.id,
-                        recipe.menu,
-                        recipe.mainImage,
-                        recipe.mbti,
-                        recipe.way,
-                        recipe.category))
-                .from(recipe)
-                .where(recipe.mbti.like(category + "%")
-                        .or(recipe.mbti.like( "%" + category)))
-                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(1)
-                .fetchOne();
-    }
-
     public List<Recipe> addFromSearchRecipeList(String keyword, Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
@@ -140,21 +109,5 @@ public class RecipeQueryRepository {
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(count)
                 .fetch();
-    }
-
-    public Recipe addOneFromSearchRecipeList(String keyword) {
-        return queryFactory.select(Projections.bean(Recipe.class,
-                        recipe.id,
-                        recipe.menu,
-                        recipe.mainImage,
-                        recipe.mbti,
-                        recipe.way,
-                        recipe.category))
-                .from(recipe)
-                .where(recipe.menu.contains(keyword)
-                        .or(recipe.ingredient.contains(keyword)))
-                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(1)
-                .fetchOne();
     }
 }
