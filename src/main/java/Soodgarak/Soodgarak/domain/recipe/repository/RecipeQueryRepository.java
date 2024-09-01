@@ -103,7 +103,7 @@ public class RecipeQueryRepository {
                 .where(recipe.mbti.like(category + "%")
                         .or(recipe.mbti.like( "%" + category)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(10)
+                .limit(count)
                 .fetch();
     }
 
