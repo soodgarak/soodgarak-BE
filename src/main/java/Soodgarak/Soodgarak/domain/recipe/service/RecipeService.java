@@ -100,7 +100,8 @@ public class RecipeService {
         } else {
             count = totalCount - searchRecipeRedis.count();
         }
-        return count >= 10L ? 10L : count;
+
+        return count >= 10L ? 10L : count + 1;
     }
 
     public RecipeWithCountResponse getResponse(String keyword, RequestType requestType) {
