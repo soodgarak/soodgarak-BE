@@ -5,4 +5,9 @@ public record RecipeRequest(
         String keyword,
         Integer page
 ) {
+    public RecipeRequest(String category, String keyword, Integer page) {
+        this.category = category;
+        this.keyword = keyword != null ? keyword.toLowerCase() : null;
+        this.page = page;
+    }
 }
