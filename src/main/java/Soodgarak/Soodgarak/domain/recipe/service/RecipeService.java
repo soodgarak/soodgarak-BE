@@ -48,14 +48,14 @@ public class RecipeService {
             totalCount = recipeRepository.count();
             recipeRedis.save(RedisRecipe.of(countCheckValue, totalCount));
 
-        } else if (keyword.equals("M") || keyword.equals("S") || keyword.equals("V")) {
+        } else if (keyword.equals("m") || keyword.equals("s") || keyword.equals("v")) {
             if (categoryRecipeRedis.existsById(countCheckValue)) {
                 return categoryRecipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
             }
             totalCount = recipeRepository.countByMbtiStartingWith(keyword);
             categoryRecipeRedis.save(RedisCategoryRecipe.of(countCheckValue, totalCount));
 
-        } else if (keyword.equals("H") || keyword.equals("N")) {
+        } else if (keyword.equals("h") || keyword.equals("n")) {
             if (categoryRecipeRedis.existsById(countCheckValue)) {
                 return categoryRecipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
             }
@@ -100,8 +100,8 @@ public class RecipeService {
             else { recipeResponseList = addFromAllRecipeList(); }
             totalCount = countData(keyword);
             hasNextData = checkNextData(RecipeGroup.ALL, totalCount);
-        } else if (keyword.equals("M") || keyword.equals("S")
-                || keyword.equals("V") || keyword.equals("H") || keyword.equals("N")) {
+        } else if (keyword.equals("m") || keyword.equals("s")
+                || keyword.equals("v") || keyword.equals("h") || keyword.equals("n")) {
             if (requestType.equals(RequestType.INIT)) { recipeResponseList = getInitCategoryRecipeList(keyword); }
             else { recipeResponseList = addFromCategoryRecipeList(keyword); }
             totalCount = countData(keyword);
