@@ -63,7 +63,7 @@ public class RecipeQueryRepository {
                 .fetch();
     }
 
-    public List<Recipe> addFromAllRecipeList(Long count) {
+    public List<Recipe> addFromAllRecipeList(Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -72,6 +72,7 @@ public class RecipeQueryRepository {
                         recipe.way,
                         recipe.category))
                 .from(recipe)
+                .where(recipe.id.notIn(list))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(count)
                 .fetch();
@@ -91,7 +92,7 @@ public class RecipeQueryRepository {
                 .fetchOne();
     }
 
-    public List<Recipe> addFromCategoryRecipeList(String category, Long count) {
+    public List<Recipe> addFromCategoryRecipeList(String category, Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -100,8 +101,9 @@ public class RecipeQueryRepository {
                         recipe.way,
                         recipe.category))
                 .from(recipe)
-                .where(recipe.mbti.like(category + "%")
+                .where((recipe.mbti.like(category + "%")
                         .or(recipe.mbti.like( "%" + category)))
+                        .and(recipe.id.notIn(list)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(count)
                 .fetch();
@@ -123,7 +125,7 @@ public class RecipeQueryRepository {
                 .fetchOne();
     }
 
-    public List<Recipe> addFromSearchRecipeList(String keyword, Long count) {
+    public List<Recipe> addFromSearchRecipeList(String keyword, Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
                         recipe.menu,
@@ -132,8 +134,9 @@ public class RecipeQueryRepository {
                         recipe.way,
                         recipe.category))
                 .from(recipe)
-                .where(recipe.menu.contains(keyword)
+                .where((recipe.menu.contains(keyword)
                         .or(recipe.ingredient.contains(keyword)))
+                        .and(recipe.id.notIn(list)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(count)
                 .fetch();

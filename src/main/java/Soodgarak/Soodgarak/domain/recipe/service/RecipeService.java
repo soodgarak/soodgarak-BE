@@ -100,7 +100,6 @@ public class RecipeService {
         } else {
             count = totalCount - searchRecipeRedis.count();
         }
-
         return count >= 10L ? 10L : count;
     }
 
@@ -217,14 +216,16 @@ public class RecipeService {
 
     private List<RecipeResponse> addFromAllRecipeList(Long totalCount) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
-        List<Recipe> recipeList = recipeQueryRepository.addFromAllRecipeList(countNextData(RecipeGroup.ALL, totalCount));
 
-        for (int index = 0; index < recipeList.size(); index++) {
-            if (recipeRedis.existsById(recipeList.get(index).getId())) {
-                recipeList.remove(index--);
-                recipeList.add(recipeQueryRepository.addOneFromAllRecipeList());
+        Iterable<RedisRecipe> redisRecipeIterable = recipeRedis.findAll();
+        List<Long> redisRecipeList = new ArrayList<>();
+        for (RedisRecipe recipe : redisRecipeIterable) {
+            if (recipe.getId() != countCheckValue) {
+                redisRecipeList.add(recipe.getId());
             }
         }
+
+        List<Recipe> recipeList = recipeQueryRepository.addFromAllRecipeList(countNextData(RecipeGroup.ALL, totalCount), redisRecipeList);
 
         for (Recipe recipe : recipeList) {
             Long id = recipe.getId();
@@ -244,14 +245,16 @@ public class RecipeService {
 
     private List<RecipeResponse> addFromCategoryRecipeList(String category, Long totalCount) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
-        List<Recipe> recipeList = recipeQueryRepository.addFromCategoryRecipeList(category, countNextData(RecipeGroup.CATEGORY, totalCount));
 
-        for (int index = 0; index < recipeList.size(); index++) {
-            if (categoryRecipeRedis.existsById(recipeList.get(index).getId())) {
-                recipeList.remove(index--);
-                recipeList.add(recipeQueryRepository.addOneFromCategoryRecipeList(category));
+        Iterable<RedisCategoryRecipe> redisRecipeIterable = categoryRecipeRedis.findAll();
+        List<Long> redisRecipeList = new ArrayList<>();
+        for (RedisCategoryRecipe recipe : redisRecipeIterable) {
+            if (recipe.getId() != countCheckValue) {
+                redisRecipeList.add(recipe.getId());
             }
         }
+
+        List<Recipe> recipeList = recipeQueryRepository.addFromCategoryRecipeList(category, countNextData(RecipeGroup.CATEGORY, totalCount), redisRecipeList);
 
         for (Recipe recipe : recipeList) {
             Long id = recipe.getId();
@@ -271,14 +274,16 @@ public class RecipeService {
 
     private List<RecipeResponse> addFromSearchRecipeList(String keyword, Long totalCount) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
-        List<Recipe> recipeList = recipeQueryRepository.addFromSearchRecipeList(keyword, countNextData(RecipeGroup.SEARCH, totalCount));
 
-        for (int index = 0; index < recipeList.size(); index++) {
-            if (searchRecipeRedis.existsById(recipeList.get(index).getId())) {
-                recipeList.remove(index--);
-                recipeList.add(recipeQueryRepository.addOneFromSearchRecipeList(keyword));
+        Iterable<RedisSearchRecipe> redisRecipeIterable = searchRecipeRedis.findAll();
+        List<Long> redisRecipeList = new ArrayList<>();
+        for (RedisSearchRecipe recipe : redisRecipeIterable) {
+            if (recipe.getId() != countCheckValue) {
+                redisRecipeList.add(recipe.getId());
             }
         }
+
+        List<Recipe> recipeList = recipeQueryRepository.addFromSearchRecipeList(keyword, countNextData(RecipeGroup.SEARCH, totalCount), redisRecipeList);
 
         for (Recipe recipe : recipeList) {
             Long id = recipe.getId();
