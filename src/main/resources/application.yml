@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  hibernate:
+    ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://soodgarak-db.cfag6omiojwb.ap-northeast-2.rds.amazonaws.com:3306/soodgarak?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+    password: soodgarakDB12345!
+
+# Redis
+  redis:
+    host: localhost
+    port: 6379
+    password: ""
+    #password: soodgarakREDIS12345!
+
+# Swagger
+springdoc:
+  version: '@project.version@'
+  swagger-ui:
+    path: /swagger    # http://localhost:8080/swagger-ui/index.html로 리다이렉션 됨
+    doc-expansion: none   # 문서의 기본 확장 상태 설정. none으로 설정하면 사용자가 클릭해서 펼쳐야 한다.
