@@ -141,4 +141,19 @@ public class RecipeQueryRepository {
                 .limit(count)
                 .fetch();
     }
+
+    public List<Recipe> getMbtiRecipeList(String mbti) {
+        return queryFactory.select(Projections.bean(Recipe.class,
+                        recipe.id,
+                        recipe.menu,
+                        recipe.mainImage,
+                        recipe.mbti,
+                        recipe.way,
+                        recipe.category))
+                .from(recipe)
+                .where(recipe.mbti.eq(mbti))
+                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+                .limit(4)
+                .fetch();
+    }
 }
