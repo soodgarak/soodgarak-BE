@@ -77,12 +77,6 @@ public class RecipeService {
             }
             totalCount = recipeRepository.countByMbtiEndingWith(keyword);
             categoryRecipeRedis.save(RedisCategoryRecipe.of(countCheckValue, totalCount));
-        } else if (isMbti(keyword)) {
-            if (mbtiRecipeRedis.existsById(countCheckValue)) {
-                return mbtiRecipeRedis.findById(countCheckValue).orElse(null).getRecipeId();
-            }
-            totalCount = recipeRepository.countByMbti(keyword);
-            mbtiRecipeRedis.save(RedisMbtiRecipe.of(countCheckValue, totalCount));
         } else {
             if (searchRecipeRedis.existsById(countCheckValue)) {
                 return searchRecipeRedis.findById((countCheckValue)).orElse(null).getRecipeId();
@@ -107,10 +101,6 @@ public class RecipeService {
             if (searchRecipeRedis.count() < totalCount) {
                 return true;
             }
-        } else {
-            if (mbtiRecipeRedis.count() < totalCount) {
-                return true;
-            }
         }
 
         return false;
@@ -123,10 +113,8 @@ public class RecipeService {
             count = totalCount - recipeRedis.count();
         } else if (group.equals(RecipeGroup.CATEGORY)) {
             count = totalCount - categoryRecipeRedis.count();
-        } else if (group.equals(RecipeGroup.SEARCH)){
-            count = totalCount - searchRecipeRedis.count();
         } else {
-            count = totalCount - mbtiRecipeRedis.count();
+            count = totalCount - searchRecipeRedis.count();
         }
 
         return count >= 10L ? 10L : count + 1;
@@ -159,15 +147,9 @@ public class RecipeService {
             }
             hasNextData = checkNextData(RecipeGroup.CATEGORY, totalCount);
         } else if (isMbti(keyword)) {
-            if (requestType.equals(RequestType.INIT)) {
-                recipeResponseList = getInitMbtiRecipeList(keyword);
-                totalCount = countData(keyword);
-            }
-            else {
-                totalCount = countData(keyword);
-                recipeResponseList = addFromMbtiRecipeList(keyword, totalCount);
-            }
-            hasNextData = checkNextData(RecipeGroup.MBTI, totalCount);
+            recipeResponseList = getMbtiRecipeList(keyword);
+            totalCount = null;
+            hasNextData = true;
         } else {
             if (requestType.equals(RequestType.INIT)) {
                 recipeResponseList = getInitSearchRecipeList(keyword);
@@ -240,28 +222,6 @@ public class RecipeService {
         for (Recipe recipe : recipeList) {
             Long id = recipe.getId();
             searchRecipeRedis.save(RedisSearchRecipe.of(id, id));
-            recipeResponseList.add(RecipeResponse.of(
-                    recipe.getId(),
-                    recipe.getMenu(),
-                    recipe.getMainImage(),
-                    recipe.getMbti(),
-                    recipe.getWay(),
-                    recipe.getCategory()
-            ));
-        }
-
-        return recipeResponseList;
-    }
-
-    private List<RecipeResponse> getInitMbtiRecipeList(String mbti) {
-        initRedis(RecipeGroup.MBTI);
-
-        List<RecipeResponse> recipeResponseList = new ArrayList<>();
-        List<Recipe> recipeList = recipeQueryRepository.getInitMbtiRecipeList(mbti);
-
-        for (Recipe recipe : recipeList) {
-            Long id = recipe.getId();
-            mbtiRecipeRedis.save(RedisMbtiRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),
@@ -362,22 +322,11 @@ public class RecipeService {
         return recipeResponseList;
     }
 
-    private List<RecipeResponse> addFromMbtiRecipeList(String mbti, Long totalCount) {
+    private List<RecipeResponse> getMbtiRecipeList(String mbti) {
         List<RecipeResponse> recipeResponseList = new ArrayList<>();
-
-        Iterable<RedisMbtiRecipe> redisRecipeIterable = mbtiRecipeRedis.findAll();
-        List<Long> redisRecipeList = new ArrayList<>();
-        for (RedisMbtiRecipe recipe : redisRecipeIterable) {
-            if (recipe.getId() != countCheckValue) {
-                redisRecipeList.add(recipe.getId());
-            }
-        }
-
-        List<Recipe> recipeList = recipeQueryRepository.addFromMbtiRecipeList(mbti, countNextData(RecipeGroup.MBTI, totalCount), redisRecipeList);
+        List<Recipe> recipeList = recipeQueryRepository.getMbtiRecipeList(mbti);
 
         for (Recipe recipe : recipeList) {
-            Long id = recipe.getId();
-            mbtiRecipeRedis.save(RedisMbtiRecipe.of(id, id));
             recipeResponseList.add(RecipeResponse.of(
                     recipe.getId(),
                     recipe.getMenu(),

@@ -26,13 +26,13 @@ public class RecipeController {
     public ResponseEntity<RecipeWithCountResponse> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
         RecipeWithCountResponse recipeResponse;
 
-        if (recipeRequest.page() == null) {
+        if (recipeRequest.mbti() != null) {
+            recipeResponse = recipeService.getResponse(recipeRequest.mbti(), null);
+        } else if (recipeRequest.page() == null) {
             if (recipeRequest.keyword() != null) {
                 recipeResponse = recipeService.getResponse(recipeRequest.keyword(), RequestType.INIT);
             } else if (recipeRequest.category() != null) {
                 recipeResponse = recipeService.getResponse(recipeRequest.category(), RequestType.INIT);
-            } else if (recipeRequest.mbti() != null) {
-                recipeResponse = recipeService.getResponse(recipeRequest.mbti(), RequestType.INIT);
             } else {
                 recipeResponse = recipeService.getResponse("", RequestType.INIT);
             }
@@ -41,8 +41,6 @@ public class RecipeController {
                 recipeResponse = recipeService.getResponse(recipeRequest.keyword(), RequestType.ADD);
             } else if (recipeRequest.category() != null) {
                 recipeResponse = recipeService.getResponse(recipeRequest.category(), RequestType.ADD);
-            } else if (recipeRequest.mbti() != null) {
-                recipeResponse = recipeService.getResponse(recipeRequest.mbti(), RequestType.ADD);
             } else {
                 recipeResponse = recipeService.getResponse("", RequestType.ADD);
             }
