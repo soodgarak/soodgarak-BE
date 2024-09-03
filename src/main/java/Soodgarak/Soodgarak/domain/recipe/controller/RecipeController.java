@@ -5,6 +5,8 @@ import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountRespons
 import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
 import Soodgarak.Soodgarak.domain.recipe.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,21 @@ public class RecipeController {
 
     @GetMapping
     @Operation(summary = "레시피 조회",
-            description = "조건(전체, 카테고리, 검색)에 해당하는 레시피 List를 조회합니다. 각 Query Parameter는 생략이 가능합니다.")
+            description = "조건(전체, 카테고리, 검색)에 해당하는 레시피 List를 조회합니다.")
+    @Parameters({
+            @Parameter(
+                    name = "category",
+                    required = false),
+            @Parameter(
+                    name = "keyword",
+                    required = false),
+            @Parameter(
+                    name = "mbti",
+                    required = false),
+            @Parameter(
+                    name = "page",
+                    required = false)
+    })
     public ResponseEntity<RecipeWithCountResponse> getRecipeList(@ModelAttribute RecipeRequest recipeRequest) {
         RecipeWithCountResponse recipeResponse;
 
