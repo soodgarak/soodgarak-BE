@@ -1,5 +1,6 @@
 package Soodgarak.Soodgarak.domain.recipe.controller;
 
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeDetailResponse;
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeRequest;
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
 import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
@@ -10,10 +11,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,5 +61,11 @@ public class RecipeController {
         }
 
         return ResponseEntity.ok(recipeResponse);
+    }
+
+    @GetMapping("/{recipeId}")
+    @Operation(summary = "레시피 상세 조회", description = "특정 레시피의 상세 정보를 조회합니다.")
+    public ResponseEntity<RecipeDetailResponse> getRecipeDetail(@RequestParam Long recipeId) {
+        return ResponseEntity.ok(recipeService.getRecipeDetail(recipeId));
     }
 }

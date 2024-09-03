@@ -1,13 +1,11 @@
 package Soodgarak.Soodgarak.domain.recipe.service;
 
+import Soodgarak.Soodgarak.domain.recipe.controller.model.ManualResponse;
+import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeDetailResponse;
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeResponse;
 import Soodgarak.Soodgarak.domain.recipe.controller.model.RecipeWithCountResponse;
-import Soodgarak.Soodgarak.domain.recipe.domain.Mbti;
-import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
-import Soodgarak.Soodgarak.domain.recipe.domain.RecipeGroup;
-import Soodgarak.Soodgarak.domain.recipe.domain.RequestType;
+import Soodgarak.Soodgarak.domain.recipe.domain.*;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisCategoryRecipe;
-import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisMbtiRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisRecipe;
 import Soodgarak.Soodgarak.domain.recipe.domain.redis.RedisSearchRecipe;
 import Soodgarak.Soodgarak.domain.recipe.repository.RecipeQueryRepository;
@@ -338,5 +336,32 @@ public class RecipeService {
         }
 
         return recipeResponseList;
+    }
+
+    public RecipeDetailResponse getRecipeDetail(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+
+        return RecipeDetailResponse.of(
+                recipeId,
+                recipe.getMenu(),
+                recipe.getIngredient(),
+                recipe.getMainImage(),
+                recipe.getTip(),
+                getManualResponseList(recipeId));
+    }
+
+    private List<ManualResponse> getManualResponseList(Long recipeId) {
+        List<Manual> manualList = recipeQueryRepository.getManualList(recipeId);
+        List<ManualResponse> manualResponseList = new ArrayList<>();
+
+        for (Manual manual : manualList) {
+            manualResponseList.add(ManualResponse.of(
+                    manual.getManualId(),
+                    manual.getManual(),
+                    manual.getManualImgUrl()
+            ));
+        }
+
+        return manualResponseList;
     }
 }

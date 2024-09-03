@@ -1,5 +1,6 @@
 package Soodgarak.Soodgarak.domain.recipe.repository;
 
+import Soodgarak.Soodgarak.domain.recipe.domain.Manual;
 import Soodgarak.Soodgarak.domain.recipe.domain.Recipe;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Soodgarak.Soodgarak.domain.recipe.domain.QRecipe.recipe;
+import static Soodgarak.Soodgarak.domain.recipe.domain.QManual.manual1;
 
 @Repository
 @RequiredArgsConstructor
@@ -123,6 +125,16 @@ public class RecipeQueryRepository {
                 .where(recipe.mbti.eq(mbti))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(4)
+                .fetch();
+    }
+
+    public List<Manual> getManualList(Long recipeId) {
+        return queryFactory.select(Projections.bean(Manual.class,
+                manual1.manualId,
+                manual1.manual,
+                manual1.manualImgUrl))
+                .from(manual1)
+                .where(manual1.recipeId.eq(recipeId))
                 .fetch();
     }
 }
