@@ -28,7 +28,7 @@ public class RecipeController {
 
         if (recipeRequest.mbti() != null) {
             recipeResponse = recipeService.getResponse(recipeRequest.mbti(), null);
-        } else if (recipeRequest.page() == null) {
+        } else if (recipeRequest.page() == 1) {
             if (recipeRequest.keyword() != null) {
                 recipeResponse = recipeService.getResponse(recipeRequest.keyword(), RequestType.INIT);
             } else if (recipeRequest.category() != null) {
