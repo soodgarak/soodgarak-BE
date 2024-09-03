@@ -62,21 +62,6 @@ public class RecipeQueryRepository {
                 .fetch();
     }
 
-    public List<Recipe> getInitMbtiRecipeList(String mbti) {
-        return queryFactory.select(Projections.bean(Recipe.class,
-                        recipe.id,
-                        recipe.menu,
-                        recipe.mainImage,
-                        recipe.mbti,
-                        recipe.way,
-                        recipe.category))
-                .from(recipe)
-                .where(recipe.mbti.eq(mbti))
-                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(30)
-                .fetch();
-    }
-
     public List<Recipe> addFromAllRecipeList(Long count, List<Long> list) {
         return queryFactory.select(Projections.bean(Recipe.class,
                         recipe.id,
@@ -120,22 +105,6 @@ public class RecipeQueryRepository {
                 .from(recipe)
                 .where((recipe.menu.contains(keyword)
                         .or(recipe.ingredient.contains(keyword)))
-                        .and(recipe.id.notIn(list)))
-                .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-                .limit(count)
-                .fetch();
-    }
-
-    public List<Recipe> addFromMbtiRecipeList(String mbti, Long count, List<Long> list) {
-        return queryFactory.select(Projections.bean(Recipe.class,
-                        recipe.id,
-                        recipe.menu,
-                        recipe.mainImage,
-                        recipe.mbti,
-                        recipe.way,
-                        recipe.category))
-                .from(recipe)
-                .where(recipe.mbti.eq(mbti)
                         .and(recipe.id.notIn(list)))
                 .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
                 .limit(count)
