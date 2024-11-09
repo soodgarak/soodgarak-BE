@@ -59,7 +59,7 @@ public class OAuthService {
     }
 
     private void saveAccessTokenToRedis(KakaoTokenResponse tokenResponse, String email) {
-        String accessTokenKey = "access_token_"+ email;
+        String accessTokenKey = "access_token:<"+ email + ">";
         redisTemplate.opsForValue().set(
                 accessTokenKey,
                 tokenResponse.getAccessToken(),
@@ -68,7 +68,7 @@ public class OAuthService {
     }
 
     private void saveRefreshTokenToRedis(KakaoTokenResponse tokenResponse, String email) {
-        String refreshTokenKey = "refresh_token_"+ email;
+        String refreshTokenKey = "refresh_token:<"+ email + ">";
         redisTemplate.opsForValue().set(
                 refreshTokenKey,
                 tokenResponse.getRefreshToken(),
