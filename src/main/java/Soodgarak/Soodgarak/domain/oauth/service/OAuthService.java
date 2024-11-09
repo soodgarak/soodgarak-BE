@@ -64,7 +64,7 @@ public class OAuthService {
                 accessTokenKey,
                 tokenResponse.getAccessToken(),
                 tokenResponse.getExpiresIn(),
-                TimeUnit.MINUTES);
+                TimeUnit.SECONDS);
     }
 
     private void saveRefreshTokenToRedis(KakaoTokenResponse tokenResponse, String email) {
@@ -73,6 +73,6 @@ public class OAuthService {
                 refreshTokenKey,
                 tokenResponse.getRefreshToken(),
                 tokenResponse.getRefreshTokenExpiresIn(),
-                TimeUnit.MINUTES);
+                TimeUnit.SECONDS);
     }
 }
