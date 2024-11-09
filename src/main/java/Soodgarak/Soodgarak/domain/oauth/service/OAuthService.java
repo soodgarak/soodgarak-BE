@@ -32,7 +32,7 @@ public class OAuthService {
     @Value("${kakao.info-uri}")
     private String INFO_URI;
 
-    public KakaoTokenResponse getAccessTokenFromKakao(String code) throws JsonProcessingException {
+    public KakaoTokenResponse getTokenFromKakao(String code) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/x-www-form-urlencoded");
 
